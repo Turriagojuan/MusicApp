@@ -1,0 +1,77 @@
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# Archivos de logs
+*.log
+
+# Archivos temporales y de swap
+*.swp
+*.swo
+*.tmp
+
+# Archivos de compilación
+/build/
+**/build/
+
+# Gradle
+.gradle/
+gradle-app.setting
+*.gradle
+gradle-wrapper.jar
+gradle-wrapper.properties
+
+# Archivos binarios y compilados
+*.class
+*.jar
+*.war
+*.ear
+*.apk
+*.ap_
+*.dex
+*.so
+*.o
+*.obj
+*.kotlin_module
+
+# IntelliJ/Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+.idea/caches
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# Archivos de cache y configuración de ejecución
+*.hprof
+.cxx/
+.externalNativeBuild/
+captures/
+local.properties
+
+# Archivos de cobertura de código
+*.ec
+*.exec
+coverage/
+
+# Firebase crashlytics y analytics
+crashlytics-build.properties
+
+# NDK
+.obj/
+
+# Test result folders
+test-output/
+
+# Fastlane metadata
+fastlane/report.xml
+fastlane/metadata/android/*
+
+
