@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">MusicApp</string>
+
+    <string name="login_title">MusicApp</string>
+    <string name="register_title">Register</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Password</string>
+    <string name="username_label">Username</string>
+    <string name="login_button">Login</string>
+    <string name="register_button">Sign Up</string>
+    <string name="no_account_prompt">Don\'t have an account? Sign up here</string>
+    <string name="has_account_prompt">Already have an account? Log in</string>
+    <string name="password_length_error">Password must be at least 6 characters long.</string>
+
+    <string name="welcome_message">Hello, %1$s!</string>
+    <string name="rhythm_module_title">Module 1: The World of Rhythm</string>
+    <string name="staff_module_title">Module 2: The Magic Staff</string>
+
+    <string name="rhythm_menu_header">Module: The World of Rhythm</string>
+    <string name="staff_menu_header">Module: The Magic Staff</string>
+    <string name="play_rhythm_game_button">Play! Follow the Rhythm</string>
+    <string name="play_staff_game_button">Play! Catch the Note</string>
+    <string name="back_button_desc">Back</string>
+    <string name="lesson_completed_desc">Completed</string>
+
+    <string name="loading_lesson">Loading...</string>
+    <string name="previous_button">Previous</string>
+    <string name="next_button">Next</string>
+    <string name="finish_lesson_button">Finish Lesson</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="change_language_button">Change Language</string>
+    <string name="logout_button">Log Out</string>
+
+    <string name="score">Score: %1$d</string>
+    <string name="lives">Lives: </string>
+    <string name="time">Time: %1$d</string>
+    <string name="game_over_title">Game Over!</string>
+    <string name="final_score_message">Your final score is: %1$d</string>
+    <string name="retry_button">Play Again</string>
+    <string name="exit_button">Exit</string>
+
+</resources>

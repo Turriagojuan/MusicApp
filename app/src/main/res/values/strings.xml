@@ -1,3 +1,43 @@
 <resources>
     <string name="app_name">MusicApp</string>
+
+    <string name="login_title">MusicApp</string>
+    <string name="register_title">Registro</string>
+    <string name="email_label">Correo Electrónico</string>
+    <string name="password_label">Contraseña</string>
+    <string name="username_label">Nombre de Usuario</string>
+    <string name="login_button">Ingresar</string>
+    <string name="register_button">Registrarse</string>
+    <string name="no_account_prompt">¿No tienes cuenta? Regístrate aquí</string>
+    <string name="has_account_prompt">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="password_length_error">La contraseña debe tener al menos 6 caracteres.</string>
+
+    <string name="welcome_message">¡Hola, %1$s!</string>
+    <string name="rhythm_module_title">Módulo 1: El Mundo del Ritmo</string>
+    <string name="staff_module_title">Módulo 2: El Pentagrama Mágico</string>
+
+    <string name="rhythm_menu_header">Módulo: El Mundo del Ritmo</string>
+    <string name="staff_menu_header">Módulo: El Pentagrama Mágico</string>
+    <string name="play_rhythm_game_button">¡A Jugar! Sigue el Ritmo</string>
+    <string name="play_staff_game_button">¡A Jugar! Atrapa la Nota</string>
+    <string name="back_button_desc">Volver</string>
+    <string name="lesson_completed_desc">Completado</string>
+
+    <string name="loading_lesson">Cargando...</string>
+    <string name="previous_button">Anterior</string>
+    <string name="next_button">Siguiente</string>
+    <string name="finish_lesson_button">Finalizar Lección</string>
+
+    <string name="settings_title">Ajustes</string>
+    <string name="change_language_button">Cambiar Idioma</string>
+    <string name="logout_button">Cerrar Sesión</string>
+
+    <string name="score">Puntuación: %1$d</string>
+    <string name="lives">Vidas: </string>
+    <string name="time">Tiempo: %1$d</string>
+    <string name="game_over_title">¡Juego Terminado!</string>
+    <string name="final_score_message">Tu puntuación final es: %1$d</string>
+    <string name="retry_button">Volver a Jugar</string>
+    <string name="exit_button">Salir</string>
+
 </resources>
