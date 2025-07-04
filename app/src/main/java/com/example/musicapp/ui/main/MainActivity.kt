@@ -53,7 +53,11 @@ class MainActivity : ComponentActivity() {
             .onEach { required ->
                 if (required) {
                     settingsViewModel.onLanguageUpdateHandled() // Se resetea el flag para evitar reinicios múltiples.
-                    recreate() // Se reinicia la actividad para que los nuevos recursos de idioma se carguen correctamente.
+                    // **CORRECCIÓN: Se reemplaza recreate() por un reinicio manual de la actividad**
+                    val intent = Intent(this@MainActivity, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    finish()
                 }
             }
             .launchIn(lifecycleScope)
