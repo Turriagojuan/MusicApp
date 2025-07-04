@@ -28,9 +28,31 @@
     <string name="next_button">Next</string>
     <string name="finish_lesson_button">Finish Lesson</string>
 
+    <string name="lesson_1_1_title">The Pulse and the Measure</string>
+    <string name="lesson_1_1_page_1">Welcome to the world of rhythm! The pulse is like the heartbeat of music. It is a series of constant beats that mark the time. Try clapping along to a steady beat!</string>
+    <string name="lesson_1_1_page_2">The measure groups these pulses. The most common is 4/4, which means there are 4 pulses in each musical \'box\' or measure. The first pulse is usually the strongest: ONE, two, three, four.</string>
+    <string name="lesson_1_2_title">Note Figures</string>
+    <string name="lesson_1_2_page_1">Figures tell us how long a sound should last.\n\nThe WHOLE NOTE lasts for 4 pulses. It\'s the longest!</string>
+    <string name="lesson_1_2_page_2">The HALF NOTE lasts for half of a whole note, that is, 2 pulses.</string>
+    <string name="lesson_1_2_page_3">The QUARTER NOTE lasts for 1 pulse. It is the most common figure to follow the rhythm.</string>
+    <string name="lesson_1_2_page_4">The EIGHTH NOTE lasts for half a pulse. It\'s faster! Two eighth notes are needed to fill one quarter note pulse.</string>
+    <string name="lesson_1_3_title">The Rests</string>
+    <string name="lesson_1_3_page_1">Music is also made of silences. Each note figure has its own rest, which lasts exactly the same amount of time.\n\nThe whole rest also lasts for 4 pulses of silence.</string>
+    <string name="lesson_1_3_page_2">The half rest lasts 2 pulses. The quarter rest, 1 pulse, and the eighth rest, half a pulse. Silence is as important as sound!</string>
+    <string name="lesson_2_1_title">What is the Staff?</string>
+    <string name="lesson_2_1_page_1">The staff is those 5 lines and 4 spaces where we write music. It\'s like the ruler for musical notes!</string>
+    <string name="lesson_2_2_title">The Treble Clef</string>
+    <string name="lesson_2_2_page_1">The Treble Clef is a symbol placed at the beginning of the staff. Its function is very important: it gives the notes their names! The \'belly\' of the clef wraps around the second line, telling us that this line is called G.</string>
+    <string name="lesson_2_3_title">Notes on the Lines</string>
+    <string name="lesson_2_3_page_1">The notes on the lines, counting from the bottom up, are: E, G, B, D, F.</string>
+    <string name="lesson_2_4_title">Notes in the Spaces</string>
+    <string name="lesson_2_4_page_1">The notes in the spaces, counting from the bottom up, spell the word: F, A, C, E.</string>
+
     <string name="settings_title">Settings</string>
-    <string name="change_language_button">Change Language</string>
+    <string name="change_language_button">Select Language</string>
     <string name="logout_button">Log Out</string>
+    <string name="language_spanish">Español</string>
+    <string name="language_english">English</string>
 
     <string name="score">Score: %1$d</string>
     <string name="lives">Lives: </string>
@@ -39,5 +61,14 @@
     <string name="final_score_message">Your final score is: %1$d</string>
     <string name="retry_button">Play Again</string>
     <string name="exit_button">Exit</string>
+    <string name="rhythm_game_idle_title">Imitate the Rhythm</string>
+    <string name="staff_game_idle_title">Catch the Note</string>
+    <string name="start_button">Start</string>
+    <string name="round">Round: %1$d</string>
+    <string name="listen_feedback">Listen!</string>
+    <string name="your_turn_feedback">Your turn!</string>
+    <string name="great_feedback">Great!</string>
+    <string name="almost_feedback">Almost! Try again.</string>
+    <string name="tap_button">Tap!</string>
 
 </resources>

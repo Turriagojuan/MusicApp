@@ -25,18 +25,23 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mainViewModel.uiState.value.user?.language?.let { lang ->
-            if (lang.isNotEmpty()) {
-                val appLocale = LocaleListCompat.forLanguageTags(lang)
-                AppCompatDelegate.setApplicationLocales(appLocale)
-            }
-        }
-
         setContent {
             MusicAppTheme {
                 val uiState by mainViewModel.uiState.collectAsState()
                 val languageUpdateRequired by settingsViewModel.languageUpdateRequired.collectAsState()
 
+                // --- LÓGICA CORREGIDA ---
+                // Se observa el estado del usuario. Cuando el usuario se carga (deja de ser null),
+                // se aplica la configuración de idioma.
+                val currentUser = uiState.user
+                if (currentUser != null) {
+                    LaunchedEffect(currentUser.language) {
+                        val appLocale = LocaleListCompat.forLanguageTags(currentUser.language)
+                        AppCompatDelegate.setApplicationLocales(appLocale)
+                    }
+                }
+
+                // Si el usuario cierra sesión, vuelve a la pantalla de Login.
                 if (uiState.isLoggedOut) {
                     val intent = Intent(this, LoginActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -44,13 +49,16 @@ class MainActivity : ComponentActivity() {
                     finish()
                 }
 
+                // Si se cambia el idioma desde Ajustes, reinicia la actividad para aplicar los cambios.
                 if (languageUpdateRequired) {
+                    // Usamos un LaunchedEffect para que solo se ejecute una vez por cambio.
                     LaunchedEffect(Unit) {
-                        settingsViewModel.onLanguageUpdateHandled()
-                        this@MainActivity.recreate()
+                        settingsViewModel.onLanguageUpdateHandled() // Resetea el flag
+                        this@MainActivity.recreate() // Reinicia la actividad
                     }
                 }
 
+                // Lanza la navegación principal de la aplicación.
                 AppNavigation(
                     mainViewModel = mainViewModel,
                     startRhythmGame = {
@@ -73,6 +81,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onStop() {
         super.onStop()
-        NotificationScheduler.scheduleNotification(this)
+        // Solo programa la notificación si el usuario no ha cerrado sesión
+        if (!mainViewModel.uiState.value.isLoggedOut) {
+            NotificationScheduler.scheduleNotification(this)
+        }
     }
 }

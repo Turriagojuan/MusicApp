@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.musicapp.R
+import com.example.musicapp.ui.lessons.LessonContentProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,43 +31,23 @@ fun RhythmMenuScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(id = R.string.rhythm_menu_header)) },
-                navigationIcon = {
-                    IconButton(onClick = onBackPressed) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = stringResource(id = R.string.back_button_desc)
-                        )
-                    }
-                }
+                navigationIcon = { IconButton(onClick = onBackPressed) { Icon(Icons.Default.ArrowBack, contentDescription = stringResource(id = R.string.back_button_desc)) } }
             )
         }
     ) { paddingValues ->
         if (uiState.isLoading) {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
         } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            Column(modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 uiState.progress?.let { progress ->
-                    LessonItem("Lección 1.1: El Pulso y el Compás", progress.lesson_1_1_completed) { onLessonClick("1.1") }
+                    LessonItem(stringResource(id = LessonContentProvider.getLesson("1.1")!!.titleResId), progress.lesson_1_1_completed) { onLessonClick("1.1") }
                     Spacer(Modifier.height(12.dp))
-                    LessonItem("Lección 1.2: Figuras de Nota", progress.lesson_1_2_completed) { onLessonClick("1.2") }
+                    LessonItem(stringResource(id = LessonContentProvider.getLesson("1.2")!!.titleResId), progress.lesson_1_2_completed) { onLessonClick("1.2") }
                     Spacer(Modifier.height(12.dp))
-                    LessonItem("Lección 1.3: Los Silencios", progress.lesson_1_3_completed) { onLessonClick("1.3") }
+                    LessonItem(stringResource(id = LessonContentProvider.getLesson("1.3")!!.titleResId), progress.lesson_1_3_completed) { onLessonClick("1.3") }
                 }
-
                 Spacer(Modifier.weight(1f))
-
-                Button(
-                    onClick = onGameClicked,
-                    modifier = Modifier.fillMaxWidth().height(60.dp)
-                ) {
+                Button(onClick = onGameClicked, modifier = Modifier.fillMaxWidth().height(60.dp)) {
                     Text(stringResource(id = R.string.play_rhythm_game_button))
                 }
             }
@@ -76,22 +57,11 @@ fun RhythmMenuScreen(
 
 @Composable
 fun LessonItem(title: String, isCompleted: Boolean, onClick: () -> Unit) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth().height(70.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+    OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth().height(70.dp)) {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
             Text(title)
             if (isCompleted) {
-                Icon(
-                    Icons.Default.CheckCircle,
-                    contentDescription = stringResource(id = R.string.lesson_completed_desc),
-                    tint = Color(0xFF4CAF50)
-                )
+                Icon(Icons.Default.CheckCircle, contentDescription = stringResource(id = R.string.lesson_completed_desc), tint = Color(0xFF4CAF50))
             }
         }
     }

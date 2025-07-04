@@ -31,31 +31,24 @@ class RhythmGameActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         try {
             toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
         } catch (e: Exception) {
             toneGenerator = null
         }
-
         setContent {
             MusicAppTheme {
                 val uiState by viewModel.uiState.collectAsState()
-
                 LaunchedEffect(Unit) {
                     viewModel.soundEvents.collectLatest { event ->
                         toneGenerator?.startTone(event.tone, 150)
                     }
                 }
-
                 RhythmGameScreen(
                     uiState = uiState,
                     onStartGame = { viewModel.startGame() },
                     onTap = { viewModel.onBeatTapped() },
-                    onFinish = {
-                        viewModel.resetGame()
-                        finish()
-                    },
+                    onFinish = { viewModel.resetGame(); finish() },
                     onRetry = { viewModel.resetGame() }
                 )
             }
@@ -70,13 +63,7 @@ class RhythmGameActivity : ComponentActivity() {
 }
 
 @Composable
-fun RhythmGameScreen(
-    uiState: RhythmGameState,
-    onStartGame: () -> Unit,
-    onTap: () -> Unit,
-    onFinish: () -> Unit,
-    onRetry: () -> Unit
-) {
+fun RhythmGameScreen(uiState: RhythmGameState, onStartGame: () -> Unit, onTap: () -> Unit, onFinish: () -> Unit, onRetry: () -> Unit) {
     Surface(modifier = Modifier.fillMaxSize()) {
         when (uiState.gameState) {
             GameState.IDLE -> IdleScreen(onStartGame)
@@ -88,29 +75,26 @@ fun RhythmGameScreen(
 
 @Composable
 fun PlayingScreen(uiState: RhythmGameState, onTap: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(stringResource(id = R.string.score, uiState.score), fontSize = 20.sp)
-        Text("Ronda: ${uiState.round}", fontSize = 20.sp)
+        Text(stringResource(id = R.string.round, uiState.round), fontSize = 20.sp)
         Spacer(modifier = Modifier.weight(1f))
 
-        Text(uiState.feedback, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+        val feedbackText = when(uiState.feedback) {
+            "¡Escucha!" -> stringResource(id = R.string.listen_feedback)
+            "¡Tu turno!" -> stringResource(id = R.string.your_turn_feedback)
+            "¡Genial!" -> stringResource(id = R.string.great_feedback)
+            "¡Casi! Inténtalo de nuevo." -> stringResource(id = R.string.almost_feedback)
+            else -> uiState.feedback
+        }
+        Text(feedbackText, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
         Spacer(modifier = Modifier.height(20.dp))
 
-        // La UI ahora solo obedece al ViewModel
         PatternDisplay(pattern = uiState.currentPattern, activeIndex = uiState.activeBeatIndex)
-
         Spacer(modifier = Modifier.weight(1f))
 
-        Button(
-            onClick = onTap,
-            enabled = uiState.gamePhase == GamePhase.PLAY,
-            modifier = Modifier.size(150.dp),
-            shape = CircleShape
-        ) {
-            Text("¡Toca!", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Button(onClick = onTap, enabled = uiState.gamePhase == GamePhase.PLAY, modifier = Modifier.size(150.dp), shape = CircleShape) {
+            Text(stringResource(id = R.string.tap_button), fontSize = 24.sp, fontWeight = FontWeight.Bold)
         }
         Spacer(modifier = Modifier.height(20.dp))
     }
@@ -120,30 +104,18 @@ fun PlayingScreen(uiState: RhythmGameState, onTap: () -> Unit) {
 fun PatternDisplay(pattern: RhythmicPattern?, activeIndex: Int) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         pattern?.sequence?.forEachIndexed { index, step ->
-            // La animación depende directamente del activeIndex del ViewModel
             val size by animateDpAsState(if (activeIndex == index) 40.dp else 30.dp, label = "")
-            Box(
-                modifier = Modifier
-                    .size(size)
-                    .clip(CircleShape)
-                    .background(if (step == 1) MaterialTheme.colorScheme.secondary else Color.LightGray)
-            )
+            Box(modifier = Modifier.size(size).clip(CircleShape).background(if (step == 1) MaterialTheme.colorScheme.secondary else Color.LightGray))
         }
     }
 }
 
 @Composable
 fun IdleScreen(onStartGame: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Imita el Ritmo", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(stringResource(id = R.string.rhythm_game_idle_title), fontSize = 24.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(20.dp))
-        Button(onClick = onStartGame) {
-            Text("Empezar")
-        }
+        Button(onClick = onStartGame) { Text(stringResource(id = R.string.start_button)) }
     }
 }
 
@@ -153,15 +125,7 @@ fun FinishedScreen(score: Int, onRetry: () -> Unit, onFinish: () -> Unit) {
         onDismissRequest = { },
         title = { Text(stringResource(id = R.string.game_over_title)) },
         text = { Text(stringResource(id = R.string.final_score_message, score), fontSize = 20.sp) },
-        confirmButton = {
-            Button(onClick = onRetry) {
-                Text(stringResource(id = R.string.retry_button))
-            }
-        },
-        dismissButton = {
-            Button(onClick = onFinish) {
-                Text(stringResource(id = R.string.exit_button))
-            }
-        }
+        confirmButton = { Button(onClick = onRetry) { Text(stringResource(id = R.string.retry_button)) } },
+        dismissButton = { Button(onClick = onFinish) { Text(stringResource(id = R.string.exit_button)) } }
     )
 }

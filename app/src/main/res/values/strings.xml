@@ -28,9 +28,31 @@
     <string name="next_button">Siguiente</string>
     <string name="finish_lesson_button">Finalizar Lección</string>
 
+    <string name="lesson_1_1_title">El Pulso y el Compás</string>
+    <string name="lesson_1_1_page_1">¡Bienvenido al mundo del ritmo! El pulso es como el latido del corazón de la música. Es una serie de golpes constantes que marcan el tiempo. ¡Intenta dar palmas siguiendo un ritmo constante!</string>
+    <string name="lesson_1_1_page_2">El compás agrupa estos pulsos. El más común es el de 4/4, que significa que hay 4 pulsos en cada \'cajita\' musical o compás. El primer pulso suele ser el más fuerte: UNO, dos, tres, cuatro.</string>
+    <string name="lesson_1_2_title">Figuras de Nota</string>
+    <string name="lesson_1_2_page_1">Las figuras nos dicen cuánto tiempo debe durar un sonido.\n\nLa REDONDA dura 4 pulsos. ¡Es la más larga!</string>
+    <string name="lesson_1_2_page_2">La BLANCA dura la mitad de una redonda, es decir, 2 pulsos.</string>
+    <string name="lesson_1_2_page_3">La NEGRA dura 1 pulso. Es la figura más común para seguir el ritmo.</string>
+    <string name="lesson_1_2_page_4">La CORCHEA dura medio pulso. ¡Es más rápida! Se necesitan dos corcheas para llenar un pulso de negra.</string>
+    <string name="lesson_1_3_title">Los Silencios</string>
+    <string name="lesson_1_3_page_1">La música también está hecha de silencios. Cada figura de nota tiene su propio silencio, que dura exactamente lo mismo.\n\nEl silencio de redonda también dura 4 pulsos de silencio.</string>
+    <string name="lesson_1_3_page_2">El silencio de blanca dura 2 pulsos. El de negra, 1 pulso, y el de corchea, medio pulso. ¡El silencio es tan importante como el sonido!</string>
+    <string name="lesson_2_1_title">¿Qué es el Pentagrama?</string>
+    <string name="lesson_2_1_page_1">El pentagrama son esas 5 líneas y 4 espacios donde escribimos la música. ¡Es como el renglón de las notas musicales!</string>
+    <string name="lesson_2_2_title">La Clave de Sol</string>
+    <string name="lesson_2_2_page_1">La Clave de Sol es un símbolo que se pone al principio del pentagrama. Su función es muy importante: ¡le da nombre a las notas! La \'pancita\' de la clave envuelve la segunda línea, y nos dice que esa línea se llama SOL.</string>
+    <string name="lesson_2_3_title">Notas en las Líneas</string>
+    <string name="lesson_2_3_page_1">Las notas en las líneas, contando desde abajo hacia arriba, son: MI, SOL, SI, RE, FA.</string>
+    <string name="lesson_2_4_title">Notas en los Espacios</string>
+    <string name="lesson_2_4_page_1">Las notas en los espacios, contando desde abajo hacia arriba, forman la palabra: FA, LA, DO, MI.</string>
+
     <string name="settings_title">Ajustes</string>
-    <string name="change_language_button">Cambiar Idioma</string>
+    <string name="change_language_button">Seleccionar Idioma</string>
     <string name="logout_button">Cerrar Sesión</string>
+    <string name="language_spanish">Español</string>
+    <string name="language_english">English</string>
 
     <string name="score">Puntuación: %1$d</string>
     <string name="lives">Vidas: </string>
@@ -39,5 +61,14 @@
     <string name="final_score_message">Tu puntuación final es: %1$d</string>
     <string name="retry_button">Volver a Jugar</string>
     <string name="exit_button">Salir</string>
+    <string name="rhythm_game_idle_title">Imita el Ritmo</string>
+    <string name="staff_game_idle_title">Atrapa la Nota</string>
+    <string name="start_button">Empezar</string>
+    <string name="round">Ronda: %1$d</string>
+    <string name="listen_feedback">¡Escucha!</string>
+    <string name="your_turn_feedback">¡Tu turno!</string>
+    <string name="great_feedback">¡Genial!</string>
+    <string name="almost_feedback">¡Casi! Inténtalo de nuevo.</string>
+    <string name="tap_button">¡Toca!</string>
 
 </resources>

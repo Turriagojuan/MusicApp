@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.musicapp.R
 
@@ -19,7 +20,7 @@ fun LessonScreen(
     lessonId: String,
     onBackPressed: () -> Unit,
     lessonViewModel: LessonViewModel = viewModel(
-        factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+        factory = object : ViewModelProvider.Factory {
             override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
                 val savedStateHandle = androidx.lifecycle.SavedStateHandle(mapOf("lessonId" to lessonId))
                 return LessonViewModel(savedStateHandle) as T
@@ -28,46 +29,30 @@ fun LessonScreen(
     )
 ) {
     val uiState by lessonViewModel.uiState.collectAsState()
-
     if (uiState.isLessonComplete) {
-        LaunchedEffect(Unit) {
-            onBackPressed()
-        }
+        LaunchedEffect(Unit) { onBackPressed() }
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(uiState.lessonContent?.title ?: stringResource(id = R.string.loading_lesson)) },
-                navigationIcon = {
-                    IconButton(onClick = onBackPressed) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = stringResource(id = R.string.back_button_desc)
-                        )
-                    }
-                }
+                title = { Text(uiState.lessonContent?.let { stringResource(id = it.titleResId) } ?: stringResource(id = R.string.loading_lesson)) },
+                navigationIcon = { IconButton(onClick = onBackPressed) { Icon(Icons.Default.ArrowBack, contentDescription = stringResource(id = R.string.back_button_desc)) } }
             )
         }
     ) { paddingValues ->
         val pageContent = uiState.lessonContent?.pages?.getOrNull(uiState.currentPage)
-
         if (pageContent != null) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = pageContent.text,
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                Text(
+                    text = stringResource(id = pageContent.textResId),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
+                )
                 LessonNavigation(
                     isFirstPage = uiState.currentPage == 0,
                     isLastPage = uiState.currentPage == (uiState.lessonContent?.pages?.size ?: 0) - 1,
@@ -78,47 +63,22 @@ fun LessonScreen(
                 )
             }
         } else {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
         }
     }
 }
 
 @Composable
-fun LessonNavigation(
-    isFirstPage: Boolean,
-    isLastPage: Boolean,
-    onPreviousClicked: () -> Unit,
-    onNextClicked: () -> Unit,
-    onFinishClicked: () -> Unit,
-    isLoading: Boolean
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Button(onClick = onPreviousClicked, enabled = !isFirstPage) {
-            Text(stringResource(id = R.string.previous_button))
-        }
-
-        if (isLoading) {
-            CircularProgressIndicator()
-        }
-
+fun LessonNavigation(isFirstPage: Boolean, isLastPage: Boolean, onPreviousClicked: () -> Unit, onNextClicked: () -> Unit, onFinishClicked: () -> Unit, isLoading: Boolean) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+        Button(onClick = onPreviousClicked, enabled = !isFirstPage) { Text(stringResource(id = R.string.previous_button)) }
+        if (isLoading) { CircularProgressIndicator() }
         if (isLastPage) {
-            Button(
-                onClick = onFinishClicked,
-                enabled = !isLoading,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-            ) {
+            Button(onClick = onFinishClicked, enabled = !isLoading, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) {
                 Text(stringResource(id = R.string.finish_lesson_button))
             }
         } else {
-            Button(onClick = onNextClicked) {
-                Text(stringResource(id = R.string.next_button))
-            }
+            Button(onClick = onNextClicked) { Text(stringResource(id = R.string.next_button)) }
         }
     }
 }
