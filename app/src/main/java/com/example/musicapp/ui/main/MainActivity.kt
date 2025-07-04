@@ -61,6 +61,7 @@ class MainActivity : ComponentActivity() {
                 // Lanza la navegación principal de la aplicación.
                 AppNavigation(
                     mainViewModel = mainViewModel,
+                    settingsViewModel = settingsViewModel, // <- CAMBIO: Se pasa la instancia
                     startRhythmGame = {
                         val intent = Intent(this, RhythmGameActivity::class.java)
                         startActivity(intent)

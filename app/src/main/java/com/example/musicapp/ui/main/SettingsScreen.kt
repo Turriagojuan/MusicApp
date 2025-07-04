@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.musicapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -16,7 +15,7 @@ import com.example.musicapp.R
 fun SettingsScreen(
     onLogoutClicked: () -> Unit,
     onBackPressed: () -> Unit,
-    settingsViewModel: SettingsViewModel = viewModel()
+    settingsViewModel: SettingsViewModel // <- CAMBIO: Ya no se crea con " = viewModel()"
 ) {
     Scaffold(
         topBar = {

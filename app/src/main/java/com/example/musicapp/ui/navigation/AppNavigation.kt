@@ -10,12 +10,14 @@ import com.example.musicapp.ui.lessons.LessonScreen
 import com.example.musicapp.ui.main.MainMenuScreen
 import com.example.musicapp.ui.main.MainViewModel
 import com.example.musicapp.ui.main.SettingsScreen
+import com.example.musicapp.ui.main.SettingsViewModel
 import com.example.musicapp.ui.rhythm_module.RhythmMenuScreen
 import com.example.musicapp.ui.staff_module.StaffMenuScreen
 
 @Composable
 fun AppNavigation(
     mainViewModel: MainViewModel,
+    settingsViewModel: SettingsViewModel, // <- CAMBIO: Se acepta el ViewModel
     startRhythmGame: () -> Unit,
     startStaffGame: () -> Unit
 ) {
@@ -49,7 +51,8 @@ fun AppNavigation(
         composable("settings") {
             SettingsScreen(
                 onLogoutClicked = { mainViewModel.logout() },
-                onBackPressed = { navController.popBackStack() }
+                onBackPressed = { navController.popBackStack() },
+                settingsViewModel = settingsViewModel // <- CAMBIO: Se pasa la instancia
             )
         }
 
