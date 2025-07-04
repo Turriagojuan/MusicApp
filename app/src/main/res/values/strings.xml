@@ -71,4 +71,7 @@
     <string name="almost_feedback">¡Casi! Inténtalo de nuevo.</string>
     <string name="tap_button">¡Toca!</string>
 
+    <string name="rhythm_game_activity_label">Sigue el Ritmo</string>
+    <string name="staff_game_activity_label">Atrapa la Nota</string>
+
 </resources>

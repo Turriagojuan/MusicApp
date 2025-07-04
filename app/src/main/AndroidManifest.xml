@@ -43,13 +43,13 @@
         <activity
             android:name=".ui.rhythm_module.RhythmGameActivity"
             android:exported="false"
-            android:label="Sigue el Ritmo"
+            android:label="@string/rhythm_game_activity_label"
             android:theme="@style/Theme.MusicApp" />
 
         <activity
             android:name=".ui.staff_module.StaffGameActivity"
             android:exported="false"
-            android:label="Atrapa la Nota"
+            android:label="@string/staff_game_activity_label"
             android:theme="@style/Theme.MusicApp" />
 
     </application>

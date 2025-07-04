@@ -71,4 +71,7 @@
     <string name="almost_feedback">Almost! Try again.</string>
     <string name="tap_button">Tap!</string>
 
+    <string name="rhythm_game_activity_label">Follow the Rhythm</string>
+    <string name="staff_game_activity_label">Catch the Note</string>
+
 </resources>
