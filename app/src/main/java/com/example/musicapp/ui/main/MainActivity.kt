@@ -10,12 +10,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.os.LocaleListCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.musicapp.notifications.NotificationScheduler
 import com.example.musicapp.ui.login.LoginActivity
 import com.example.musicapp.ui.navigation.AppNavigation
 import com.example.musicapp.ui.rhythm_module.RhythmGameActivity
 import com.example.musicapp.ui.staff_module.StaffGameActivity
 import com.example.musicapp.ui.theme.MusicAppTheme
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class MainActivity : ComponentActivity() {
 
@@ -25,43 +29,56 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent {
-            MusicAppTheme {
-                val uiState by mainViewModel.uiState.collectAsState()
-                val languageUpdateRequired by settingsViewModel.languageUpdateRequired.collectAsState()
+        // --- INICIO DE LA LÓGICA DE IDIOMA CORREGIDA ---
 
-                // --- LÓGICA CORREGIDA ---
-                // Se observa el estado del usuario. Cuando el usuario se carga (deja de ser null),
-                // se aplica la configuración de idioma.
-                val currentUser = uiState.user
-                if (currentUser != null) {
-                    LaunchedEffect(currentUser.language) {
-                        val appLocale = LocaleListCompat.forLanguageTags(currentUser.language)
+        // 1. Se observa el idioma del usuario desde el ViewModel.
+        //    Esto se hace fuera de setContent para aplicar el idioma antes de que se dibuje la UI.
+        mainViewModel.uiState
+            .onEach { state ->
+                // Cuando se obtiene el usuario, se extrae su idioma guardado.
+                state.user?.language?.let { lang ->
+                    val appLocale = LocaleListCompat.forLanguageTags(lang)
+                    // Se aplica el idioma a toda la aplicación.
+                    // Se comprueba si el idioma ya es el correcto para evitar un bucle de actualizaciones.
+                    if (AppCompatDelegate.getApplicationLocales() != appLocale) {
                         AppCompatDelegate.setApplicationLocales(appLocale)
                     }
                 }
+            }
+            .distinctUntilChanged { old, new -> old.user?.language == new.user?.language }
+            .launchIn(lifecycleScope)
 
-                // Si el usuario cierra sesión, vuelve a la pantalla de Login.
-                if (uiState.isLoggedOut) {
-                    val intent = Intent(this, LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    finish()
+        // 2. Se observa si el usuario ha solicitado un cambio de idioma desde la pantalla de Ajustes.
+        settingsViewModel.languageUpdateRequired
+            .onEach { required ->
+                if (required) {
+                    settingsViewModel.onLanguageUpdateHandled() // Se resetea el flag para evitar reinicios múltiples.
+                    recreate() // Se reinicia la actividad para que los nuevos recursos de idioma se carguen correctamente.
                 }
+            }
+            .launchIn(lifecycleScope)
 
-                // Si se cambia el idioma desde Ajustes, reinicia la actividad para aplicar los cambios.
-                if (languageUpdateRequired) {
-                    // Usamos un LaunchedEffect para que solo se ejecute una vez por cambio.
+        // --- FIN DE LA LÓGICA DE IDIOMA CORREGIDA ---
+
+        setContent {
+            MusicAppTheme {
+                val uiState by mainViewModel.uiState.collectAsState()
+
+                // Si el usuario cierra sesión, se le redirige a la pantalla de Login.
+                if (uiState.isLoggedOut) {
+                    // Se usa LaunchedEffect para realizar la navegación fuera del hilo de la UI.
                     LaunchedEffect(Unit) {
-                        settingsViewModel.onLanguageUpdateHandled() // Resetea el flag
-                        this@MainActivity.recreate() // Reinicia la actividad
+                        val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                        finish()
                     }
                 }
 
-                // Lanza la navegación principal de la aplicación.
+                // Se lanza la navegación principal de la aplicación.
                 AppNavigation(
                     mainViewModel = mainViewModel,
-                    settingsViewModel = settingsViewModel, // <- CAMBIO: Se pasa la instancia
+                    settingsViewModel = settingsViewModel,
                     startRhythmGame = {
                         val intent = Intent(this, RhythmGameActivity::class.java)
                         startActivity(intent)
@@ -77,12 +94,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        // Cancela cualquier notificación pendiente cuando el usuario vuelve a la app.
         NotificationScheduler.cancelNotification(this)
     }
 
     override fun onStop() {
         super.onStop()
-        // Solo programa la notificación si el usuario no ha cerrado sesión
+        // Programa una notificación de recordatorio si el usuario no ha cerrado sesión.
         if (!mainViewModel.uiState.value.isLoggedOut) {
             NotificationScheduler.scheduleNotification(this)
         }
