@@ -1,14 +1,24 @@
 package com.example.musicapp.ui.main
 
+import android.Manifest // <-- AÑADE ESTA IMPORTACIÓN
 import android.content.Intent
+import android.content.pm.PackageManager // <-- AÑADE ESTA IMPORTACIÓN
+import android.os.Build // <-- AÑADE ESTA IMPORTACIÓN
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts // <-- AÑADE ESTA IMPORTACIÓN
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat // <-- AÑADE ESTA IMPORTACIÓN
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.musicapp.notifications.NotificationScheduler
@@ -26,34 +36,55 @@ class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
 
+    // --- INICIO DE CAMBIOS ---
+    // Se crea un lanzador para solicitar permisos.
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permiso concedido.
+        } else {
+            // Permiso denegado. Podrías mostrar un mensaje al usuario.
+        }
+    }
+
+    private fun askNotificationPermission() {
+        // Esta función solo se ejecuta en Android 13 (API 33) o superior.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                // Se solicita el permiso.
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+    // --- FIN DE CAMBIOS ---
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // --- INICIO DE LA LÓGICA DE IDIOMA CORREGIDA ---
+        // --- INICIO DE CAMBIOS ---
+        // Se solicita el permiso al crear la actividad.
+        askNotificationPermission()
+        // --- FIN DE CAMBIOS ---
 
-        // 1. Se observa el idioma del usuario desde el ViewModel.
-        //    Esto se hace fuera de setContent para aplicar el idioma antes de que se dibuje la UI.
+        // (El resto de tu código en onCreate se mantiene igual)
         mainViewModel.uiState
             .onEach { state ->
-                // Cuando se obtiene el usuario, se extrae su idioma guardado.
                 state.user?.language?.let { lang ->
                     val appLocale = LocaleListCompat.forLanguageTags(lang)
-                    // Se aplica el idioma a toda la aplicación.
-                    // Se comprueba si el idioma ya es el correcto para evitar un bucle de actualizaciones.
                     if (AppCompatDelegate.getApplicationLocales() != appLocale) {
                         AppCompatDelegate.setApplicationLocales(appLocale)
                     }
+                    mainViewModel.onLanguageApplied()
                 }
             }
             .distinctUntilChanged { old, new -> old.user?.language == new.user?.language }
             .launchIn(lifecycleScope)
 
-        // 2. Se observa si el usuario ha solicitado un cambio de idioma desde la pantalla de Ajustes.
         settingsViewModel.languageUpdateRequired
             .onEach { required ->
                 if (required) {
-                    settingsViewModel.onLanguageUpdateHandled() // Se resetea el flag para evitar reinicios múltiples.
-                    // **CORRECCIÓN: Se reemplaza recreate() por un reinicio manual de la actividad**
+                    settingsViewModel.onLanguageUpdateHandled()
                     val intent = Intent(this@MainActivity, MainActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
@@ -62,15 +93,11 @@ class MainActivity : ComponentActivity() {
             }
             .launchIn(lifecycleScope)
 
-        // --- FIN DE LA LÓGICA DE IDIOMA CORREGIDA ---
-
         setContent {
             MusicAppTheme {
                 val uiState by mainViewModel.uiState.collectAsState()
 
-                // Si el usuario cierra sesión, se le redirige a la pantalla de Login.
                 if (uiState.isLoggedOut) {
-                    // Se usa LaunchedEffect para realizar la navegación fuera del hilo de la UI.
                     LaunchedEffect(Unit) {
                         val intent = Intent(this@MainActivity, LoginActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -79,32 +106,39 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                // Se lanza la navegación principal de la aplicación.
-                AppNavigation(
-                    mainViewModel = mainViewModel,
-                    settingsViewModel = settingsViewModel,
-                    startRhythmGame = {
-                        val intent = Intent(this, RhythmGameActivity::class.java)
-                        startActivity(intent)
-                    },
-                    startStaffGame = {
-                        val intent = Intent(this, StaffGameActivity::class.java)
-                        startActivity(intent)
+                if (!uiState.languageReady || uiState.isLoading) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
-                )
+                } else {
+                    AppNavigation(
+                        mainViewModel = mainViewModel,
+                        settingsViewModel = settingsViewModel,
+                        startRhythmGame = {
+                            val intent = Intent(this, RhythmGameActivity::class.java)
+                            startActivity(intent)
+                        },
+                        startStaffGame = {
+                            val intent = Intent(this, StaffGameActivity::class.java)
+                            startActivity(intent)
+                        }
+                    )
+                }
             }
         }
     }
 
+    // (El resto de tu MainActivity se mantiene igual)
     override fun onResume() {
         super.onResume()
-        // Cancela cualquier notificación pendiente cuando el usuario vuelve a la app.
         NotificationScheduler.cancelNotification(this)
     }
 
     override fun onStop() {
         super.onStop()
-        // Programa una notificación de recordatorio si el usuario no ha cerrado sesión.
         if (!mainViewModel.uiState.value.isLoggedOut) {
             NotificationScheduler.scheduleNotification(this)
         }

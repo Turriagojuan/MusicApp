@@ -12,11 +12,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+// --- INICIO DE CAMBIOS ---
 data class MainUiState(
     val isLoading: Boolean = true,
     val user: User? = null,
-    val isLoggedOut: Boolean = false
+    val isLoggedOut: Boolean = false,
+    val languageReady: Boolean = false // Nuevo estado para controlar la carga del idioma
 )
+// --- FIN DE CAMBIOS ---
 
 class MainViewModel : ViewModel() {
 
@@ -34,12 +37,20 @@ class MainViewModel : ViewModel() {
             _uiState.update { it.copy(isLoading = true) }
             val currentUser = userRepository.getCurrentUser()
             if (currentUser != null) {
+                // Se actualiza el usuario, pero languageReady sigue en false hasta que MainActivity lo confirme.
                 _uiState.update { it.copy(isLoading = false, user = currentUser) }
             } else {
                 _uiState.update { it.copy(isLoading = false, isLoggedOut = true) }
             }
         }
     }
+
+    // --- INICIO DE CAMBIOS ---
+    // Nueva función para que MainActivity nos avise cuando el idioma ya se aplicó.
+    fun onLanguageApplied() {
+        _uiState.update { it.copy(languageReady = true) }
+    }
+    // --- FIN DE CAMBIOS ---
 
     fun logout() {
         userRepository.logout()
